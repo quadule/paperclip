@@ -3,6 +3,7 @@ module Paperclip
   # to the +File+ class. Useful for testing.
   #   user.avatar = File.new("test/test_avatar.jpg")
   module Upfile
+    OPENSSL_AVAILABLE = !`which openssl`.blank? && $?.success?
 
     # Infer the MIME-type of the file from the extension.
     def content_type
@@ -35,7 +36,9 @@ module Paperclip
 
     # Returns the hash of the file.
     def fingerprint
-      fingerprint = if self.path
+      fingerprint = if self.path && OPENSSL_AVAILABLE
+        Paperclip.run('openssl', 'md5 :file', :file => self.path).split('= ').last.strip
+      elsif self.path
         Digest::MD5.file(self.path).hexdigest
       else
         Digest::MD5.hexdigest(self.read)
