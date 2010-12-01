@@ -5,6 +5,8 @@ module Paperclip
   # the file upon assignment.
   class Attachment
     include IOStream
+    
+    OPENSSL_AVAILABLE = !`which openssl`.empty? && $?.success?
 
     def self.default_options
       @default_options ||= {
@@ -198,9 +200,17 @@ module Paperclip
     end
 
     def generate_fingerprint(source)
-      data = source.read
-      source.rewind if source.respond_to?(:rewind)
-      Digest::MD5.hexdigest(data)
+      use_file = source.path && File.exists?(source.path)
+      
+      if OPENSSL_AVAILABLE && source.path
+        Paperclip.run('openssl', 'md5 :file', :file => source.path).split('= ').last.strip
+      elsif source.path
+        Digest::MD5.file(source.path).hexdigest
+      else
+        data = source.read
+        source.rewind if source.respond_to?(:rewind)
+        Digest::MD5.hexdigest(source.read)
+      end
     end
 
     # Paths and URLs can have a number of variables interpolated into them
