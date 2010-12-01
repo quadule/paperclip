@@ -86,7 +86,7 @@ PLATFORMS
 DEPENDENCIES
   aws-s3
   mocha
-  rails (~> 3.0.0)
+  rails (~> 3.0.3)
   rake
   ruby-debug
   shoulda
