@@ -200,11 +200,12 @@ module Paperclip
     end
 
     def generate_fingerprint(source)
+      source = source.tempfile if source.respond_to?(:tempfile)
       use_file = source.path && File.exists?(source.path)
       
-      if OPENSSL_AVAILABLE && source.path
+      if OPENSSL_AVAILABLE && use_file
         Paperclip.run('openssl', 'md5 :file', :file => source.path).split('= ').last.strip
-      elsif source.path
+      elsif use_file
         Digest::MD5.file(source.path).hexdigest
       else
         data = source.read
