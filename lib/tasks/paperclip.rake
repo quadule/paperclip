@@ -5,7 +5,7 @@ def obtain_class
 end
 
 def obtain_attachments(klass)
-  klass = Object.const_get(klass.to_s)
+  klass = Paperclip.class_for(klass.to_s)
   name = ENV['ATTACHMENT'] || ENV['attachment']
   raise "Class #{klass.name} has no attachments specified" unless klass.respond_to?(:attachment_definitions)
   if !name.blank? && klass.attachment_definitions.keys.include?(name)

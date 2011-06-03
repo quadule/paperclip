@@ -18,16 +18,48 @@ more detailed options.
 
 The complete [RDoc](http://rdoc.info/gems/paperclip) is online.
 
+Changes in this repo
+------------
+
+Allowed to refresh images of classes with namespaces. For example:
+
+    rake paperclip:refresh CLASS='User::Asset'
+
+Requirements
+------------
+
+ImageMagick must be installed and Paperclip must have access to it. To ensure
+that it does, on your command line, run `which convert` (one of the ImageMagick
+utilities). This will give you the path where that utility is installed. For
+example, it might return `/usr/local/bin/convert`.
+
+Then, in your environment config file, let Paperclip know to look there by adding that 
+directory to its path.
+
+In development mode, you might add this line to `config/environments/development.rb)`:
+
+    Paperclip.options[:command_path] = "/usr/local/bin/"
+
 Installation
 ------------
+
+Paperclip is distributed as a gem, which is how it should be used in your app. It's
+technically still installable as a plugin, but that's discouraged, as Rails plays
+well with gems.
 
 Include the gem in your Gemfile:
 
     gem "paperclip", "~> 2.3"
 
-Or as a plugin:
+Or, if you don't use Bundler (though you probably should, even in Rails 2), with config.gem
 
-  ruby script/plugin install git://github.com/thoughtbot/paperclip.git
+    # In config/environment.rb
+    ...
+    Rails::Initializer.run do |config|
+      ...
+      config.gem "paperclip", :version => "~> 2.3"
+      ...
+    end
 
 Quick Start
 -----------
@@ -185,7 +217,8 @@ Testing
 -------
 
 Paperclip provides rspec-compatible matchers for testing attachments. See the
-documentation on Paperclip::Shoulda::Matchers for more information.
+documentation on [Paperclip::Shoulda::Matchers](http://rubydoc.info/gems/paperclip/Paperclip/Shoulda/Matchers)
+for more information.
 
 Contributing
 ------------
